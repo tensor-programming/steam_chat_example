@@ -74,7 +74,12 @@ List<Widget> createListOfChannels(List<Channel> channels, context) {
   final provider = Provider.of<ChatModel>(context);
 
   return channels
-      .map((chan) => ListTile(
+      // convert to list to gain access to the index and make deletion more reliable.
+      .asMap()
+      .map((idx, chan) => MapEntry(
+          idx,
+          ListTile(
+            // unique key makes it easier for the streamview to know which ListTile is which.
             key: UniqueKey(),
             title: Text(
               "Channel Title: ${chan.cid.replaceFirstMapped("mobile:", (match) => "")}",
@@ -86,9 +91,12 @@ List<Widget> createListOfChannels(List<Channel> channels, context) {
                   chan.extraData["image"] ?? "https://picsum.photos/100/100"),
             ),
             onLongPress: () async {
+              // remove channel from list.
+              channels.removeAt(idx);
               provider.currentChannel = chan;
               await chan.delete();
             },
-          ))
+          )))
+      .values
       .toList();
 }
