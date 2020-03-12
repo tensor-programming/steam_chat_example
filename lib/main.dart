@@ -159,6 +159,7 @@ class ChannelView extends StatelessWidget {
             onPressed: () async {
               if (_formKey.currentState.validate()) {
                 final channelName = _controller.value.text;
+                final channelTitles = channels.map((e) => e.cid).toList();
 
                 _controller.clear();
 
@@ -168,6 +169,23 @@ class ChannelView extends StatelessWidget {
                   extraData: {
                     "image": "https://picsum.photos/100/100",
                   },
+                );
+
+                if (!channelTitles.contains(channelName)) {
+                  await channel.create();
+                }
+
+                await channel.watch();
+
+                provider.currentChannel = channel;
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => StreamChannel(
+                      child: ChatPage(),
+                      channel: channel,
+                    ),
+                  ),
                 );
               }
             },
