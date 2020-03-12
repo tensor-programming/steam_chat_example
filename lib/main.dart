@@ -137,8 +137,12 @@ class ChannelView extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 }
+
+                // clear list to avoid duplicates
                 channels.clear();
+                // repopulate list
                 channels.addAll(snapshot.data);
+
                 if (snapshot.data.length == 0) {
                   return Container();
                 }
@@ -171,7 +175,8 @@ class ChannelView extends StatelessWidget {
                   },
                 );
 
-                if (!channelTitles.contains(channelName)) {
+                // match against strings where pattern = mobile:*
+                if (!channelTitles.contains("mobile:$channelName")) {
                   await channel.create();
                 }
 
